@@ -3,32 +3,32 @@ ALTER PROC [dbo].[NewsLetterSubscriptions_SelectAll]
     @PageSize int,
     @All bit = null
 AS
-BEGIN
-    /*
-    Declare @PageIndex int = 0 , @PageSize int = 100, @All bit = 1
-    Execute dbo.NewsLetterSubscriptions_SelectAll
-    @PageIndex , @PageSize , @All 
+/*
+Declare @PageIndex int = 0 , @PageSize int = 100, @All bit = 1
+Execute dbo.NewsLetterSubscriptions_SelectAll
+@PageIndex , @PageSize , @All 
 
+Declare @PageIndex int = 0
+Declare @PageSize int = 100
+Declare @All bit = 1
+
+EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
+
+-- Test case where @All = 0
     Declare @PageIndex int = 0
-    Declare @PageSize int = 100
-    Declare @All bit = 1
+Declare @PageSize int = 100
+declare @All bit = 0
 
-    EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
+EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
 
-    -- Test case where @All = 0
-	    Declare @PageIndex int = 0
-    Declare @PageSize int = 100
-    declare @All bit = 0
+-- Test case where @All = NULL (Show unsubscribed)
+DECLARE @PageIndex int = 0;
+DECLARE @PageSize int = 100;
+DECLARE @All bit = NULL;
 
-    EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
-
-    -- Test case where @All = NULL (Show unsubscribed)
-    DECLARE @PageIndex int = 0;
-    DECLARE @PageSize int = 100;
-    DECLARE @All bit = NULL;
-
-    EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
-    */
+EXEC dbo.NewsLetterSubscriptions_SelectAll @PageIndex, @PageSize, @All
+*/
+BEGIN
     
     DECLARE @offSet int = @PageIndex * @PageSize
     
