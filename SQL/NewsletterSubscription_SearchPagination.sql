@@ -1,11 +1,3 @@
-﻿USE [MoneFi]
-GO
-/****** Object:  StoredProcedure [dbo].[NewsLetterSubscriptions_SearchPagination]    Script Date: 6/20/2023 4:58:00 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
 ALTER PROCEDURE [dbo].[NewsLetterSubscriptions_SearchPagination]
     @PageIndex int,
     @PageSize int,
