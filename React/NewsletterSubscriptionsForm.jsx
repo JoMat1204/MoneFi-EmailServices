@@ -6,10 +6,6 @@ import newsletterFormValidation from 'schemas/newsletterFormSchema';
 import * as newsletterSubscriptionFormService from 'services/newsletterSubscriptionFormService';
 import { Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-import debug from 'sabio-debug';
-
-
-const _logger = debug.extend("NewsletterSubscriptions");
 
 function NewsletterSubscriptions() {
   const handleSubmit = (values, { setSubmitting , resetForm}) => {
@@ -27,12 +23,12 @@ function NewsletterSubscriptions() {
     Swal.fire("Thank You For Applying!", "Email added successfully!").then(() => {
       navigate("/")
       })
-    _logger("Email added successfully!");
+    console.log("Email added successfully!");
   }
 
   const onEmailFail = () => {
     Swal.fire("Thank You!", "Your Email is already subscribed!")
-    _logger("Error adding email:");
+    console.log("Error adding email:");
   }
 
   return (
