@@ -1,173 +1,154 @@
-﻿using Sabio.Data;
-using Sabio.Data.Providers;
-using Sabio.Models;
-using Sabio.Models.Domain;
-using Sabio.Models.Requests;
-using Stripe.Terminal;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sabio.Services
+public class NewsletterSubscriptionService : INewsletterSubscriptionService
 {
-    public class NewsletterSubscriptionService : INewsletterSubscriptionService
+    IDataProvider _data = null;
+
+    public NewsletterSubscriptionService(IDataProvider data)
     {
-        IDataProvider _data = null;
+        _data = data;
+    }
 
-        public NewsletterSubscriptionService(IDataProvider data)
+    public NewsletterSubscription GetByEmail(string Email)
+    {
+        string procName = "[dbo].[NewsLetterSubscriptions_Select_ByEmail]";
+        NewsletterSubscription news = null;
+        _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
         {
-            _data = data;
+            paramCollection.AddWithValue("@Email", Email);
+        }, delegate (IDataReader reader, short set)
+        {
+            int startingIndex = 0;
+            news = MapNewsletterSubscriptions(reader , ref startingIndex);
         }
+        );
+        return news;
+    }
 
-        public NewsletterSubscription GetByEmail(string Email)
+    public Paged<NewsletterSubscription> GetAllPaginated(int pageIndex, int pageSize, bool? all = null)
+    {
+        string procName = "[dbo].[NewsLetterSubscriptions_SelectAll]";
+        List<NewsletterSubscription> newsList = null;
+        int totalCount = 0;
+        Paged<NewsletterSubscription> pagedList = null;
+
+        _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
         {
-            string procName = "[dbo].[NewsLetterSubscriptions_Select_ByEmail]";
-            NewsletterSubscription news = null;
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
-            {
-                paramCollection.AddWithValue("@Email", Email);
-            }, delegate (IDataReader reader, short set)
-            {
-                int startingIndex = 0;
-                news = MapNewsletterSubscriptions(reader , ref startingIndex);
-            }
-            );
-            return news;
-        }
-
-        public Paged<NewsletterSubscription> GetAllPaginated(int pageIndex, int pageSize, bool? all = null)
+            paramCollection.AddWithValue("@PageIndex", pageIndex);
+            paramCollection.AddWithValue("@PageSize", pageSize);
+            paramCollection.AddWithValue("@All", all);
+        }, delegate (IDataReader reader, short set)
         {
-            string procName = "[dbo].[NewsLetterSubscriptions_SelectAll]";
-            List<NewsletterSubscription> newsList = null;
-            int totalCount = 0;
-            Paged<NewsletterSubscription> pagedList = null;
+            int startingIndex = 0;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
+            if (newsList == null)
             {
-                paramCollection.AddWithValue("@PageIndex", pageIndex);
-                paramCollection.AddWithValue("@PageSize", pageSize);
-                paramCollection.AddWithValue("@All", all);
-            }, delegate (IDataReader reader, short set)
-            {
-                int startingIndex = 0;
-
-                if (newsList == null)
-                {
-                    newsList = new List<NewsletterSubscription>();
-                }
-
-                NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
-                totalCount = reader.GetSafeInt32(startingIndex++);
-                newsList.Add(news);
-            });
-
-            if (newsList != null)
-            {
-                pagedList = new Paged<NewsletterSubscription>(newsList, pageIndex, pageSize, totalCount);
+                newsList = new List<NewsletterSubscription>();
             }
 
-            return pagedList;
+            NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
+            totalCount = reader.GetSafeInt32(startingIndex++);
+            newsList.Add(news);
+        });
+
+        if (newsList != null)
+        {
+            pagedList = new Paged<NewsletterSubscription>(newsList, pageIndex, pageSize, totalCount);
         }
 
-        public Paged<NewsletterSubscription> SearchPaginated(int pageIndex, int pageSize, bool all, string query)
+        return pagedList;
+    }
+
+    public Paged<NewsletterSubscription> SearchPaginated(int pageIndex, int pageSize, bool all, string query)
+    {
+        string procName = "[dbo].[NewsLetterSubscriptions_SearchPagination]";
+        List<NewsletterSubscription> newsList = null;
+        int totalCount = 0;
+        Paged<NewsletterSubscription> pagedList = null;
+
+        _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
         {
-            string procName = "[dbo].[NewsLetterSubscriptions_SearchPagination]";
-            List<NewsletterSubscription> newsList = null;
-            int totalCount = 0;
-            Paged<NewsletterSubscription> pagedList = null;
+            paramCollection.AddWithValue("@PageIndex", pageIndex);
+            paramCollection.AddWithValue("@PageSize", pageSize);
+            paramCollection.AddWithValue("@Query", query);
+            paramCollection.AddWithValue("@All", all);
+        }, delegate (IDataReader reader, short set)
+        {
+            int startingIndex = 0;
 
-            _data.ExecuteCmd(procName, delegate (SqlParameterCollection paramCollection)
+            if (newsList == null)
             {
-                paramCollection.AddWithValue("@PageIndex", pageIndex);
-                paramCollection.AddWithValue("@PageSize", pageSize);
-                paramCollection.AddWithValue("@Query", query);
-                paramCollection.AddWithValue("@All", all);
-            }, delegate (IDataReader reader, short set)
-            {
-                int startingIndex = 0;
-
-                if (newsList == null)
-                {
-                    newsList = new List<NewsletterSubscription>();
-                }
-
-                NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
-                totalCount = reader.GetSafeInt32(startingIndex++);
-                newsList.Add(news);
-            });
-
-            if (newsList != null)
-            {
-                pagedList = new Paged<NewsletterSubscription>(newsList, pageIndex, pageSize, totalCount);
+                newsList = new List<NewsletterSubscription>();
             }
 
-            return pagedList;
+            NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
+            totalCount = reader.GetSafeInt32(startingIndex++);
+            newsList.Add(news);
+        });
+
+        if (newsList != null)
+        {
+            pagedList = new Paged<NewsletterSubscription>(newsList, pageIndex, pageSize, totalCount);
         }
 
+        return pagedList;
+    }
 
-        public List<NewsletterSubscription> GetAllSubscribed()
+
+    public List<NewsletterSubscription> GetAllSubscribed()
+    {
+        string procName = "[dbo].[NewsLetterSubscriptions_SelectAll_Subscribed]";
+        List<NewsletterSubscription> newsList = null; 
+
+        _data.ExecuteCmd(procName, null, delegate (IDataReader reader, short set)
         {
-            string procName = "[dbo].[NewsLetterSubscriptions_SelectAll_Subscribed]";
-            List<NewsletterSubscription> newsList = null; 
+            int startingIndex = 0;
 
-            _data.ExecuteCmd(procName, null, delegate (IDataReader reader, short set)
+            if (newsList == null)
             {
-                int startingIndex = 0;
+                newsList = new List<NewsletterSubscription>();
+            }
 
-                if (newsList == null)
-                {
-                    newsList = new List<NewsletterSubscription>();
-                }
+            NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
+            newsList.Add(news);
+        });
 
-                NewsletterSubscription news = MapNewsletterSubscriptions(reader, ref startingIndex);
-                newsList.Add(news);
-            });
+        return newsList;
+    }
 
-            return newsList;
-        }
+    public void Add(NewsletterSubscriptionAddRequest model)
+    {
+        string procName = "[dbo].[NewsletterSubscriptions_Insert]";
 
-        public void Add(NewsletterSubscriptionAddRequest model)
+        _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
         {
-            string procName = "[dbo].[NewsletterSubscriptions_Insert]";
+            AddCommonParams(model, col);
 
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
-            {
-                AddCommonParams(model, col);
+        });
+    }
 
-            });
-        }
+    public void Update(NewsletterSubscriptionAddRequest model)
+    {
+        string procName = "dbo.NewsLetterSubscriptions_Update";
 
-        public void Update(NewsletterSubscriptionAddRequest model)
+        _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
         {
-            string procName = "dbo.NewsLetterSubscriptions_Update";
+            AddCommonParams(model, col);
+        });
+    }
 
-            _data.ExecuteNonQuery(procName, inputParamMapper: delegate (SqlParameterCollection col)
-            {
-                AddCommonParams(model, col);
-            });
-        }
+    private static NewsletterSubscription MapNewsletterSubscriptions(IDataReader reader, ref int startingIndex)
+    {
+        NewsletterSubscription news = new NewsletterSubscription();
 
-        private static NewsletterSubscription MapNewsletterSubscriptions(IDataReader reader, ref int startingIndex)
-        {
-            NewsletterSubscription news = new NewsletterSubscription();
+        news.Email = reader.GetSafeString(startingIndex++);
+        news.IsSubscribed = reader.GetSafeBool(startingIndex++);
+        news.DateCreated = reader.GetSafeDateTime(startingIndex++);
+        news.DateModified = reader.GetSafeDateTime(startingIndex++);
+        return news;
+    }
 
-            news.Email = reader.GetSafeString(startingIndex++);
-            news.IsSubscribed = reader.GetSafeBool(startingIndex++);
-            news.DateCreated = reader.GetSafeDateTime(startingIndex++);
-            news.DateModified = reader.GetSafeDateTime(startingIndex++);
-            return news;
-        }
-
-        private static void AddCommonParams(NewsletterSubscriptionAddRequest model, SqlParameterCollection col)
-        {
-            col.AddWithValue("@Email", model.Email);
-            col.AddWithValue("@IsSubscribed", model.IsSubscribed);
-        }
+    private static void AddCommonParams(NewsletterSubscriptionAddRequest model, SqlParameterCollection col)
+    {
+        col.AddWithValue("@Email", model.Email);
+        col.AddWithValue("@IsSubscribed", model.IsSubscribed);
     }
 }
