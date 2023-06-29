@@ -2,14 +2,12 @@ import React, { useEffect, useState } from "react";
 import { listAll, listSubscribed, searchPagination } from "services/newsletterSubscriptionFormService";
 import NewsletterSubscriptionsTableTheme from "./NewsletterSubscriptionsTableTheme";
 import toastr from "toastr";
-import debug from "sabio-debug";
 
 const NewsletterSubscriptionTable = () => {
   const [subscribedUsers, setSubscribedUsers] = useState({ array: [] });
   const [showSubscribedOnly] = useState(false);
   const [pageData] = useState({ pageIndex: 0, pageSize: 100 });
   const [searchQuery, setSearchQuery] = useState("");
-  const _logger = debug.extend("Newslettersubscriptiontable");
 
   useEffect(() => {
     loadSubscribedUsers();
@@ -57,7 +55,7 @@ const NewsletterSubscriptionTable = () => {
   };
 
   const triggerParentUpdate = (updatedUser) => {
-    _logger("onUpdate", { updatedUser: updatedUser });
+    console.log("onUpdate", { updatedUser: updatedUser });
 
     setSubscribedUsers((prevState) => {
       const indexOfUser = prevState.array.findIndex((user) => user.email === updatedUser.email);
