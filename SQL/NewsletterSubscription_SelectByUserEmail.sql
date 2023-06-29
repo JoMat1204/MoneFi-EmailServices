@@ -1,10 +1,3 @@
-﻿USE [MoneFi]
-GO
-/****** Object:  StoredProcedure [dbo].[NewsLetterSubscriptions_Select_ByEmail]    Script Date: 6/20/2023 4:58:05 PM ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
 ALTER PROC [dbo].[NewsLetterSubscriptions_Select_ByEmail]
 @Email nvarchar(50)
 
