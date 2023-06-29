@@ -2,6 +2,7 @@ ALTER PROC [dbo].[NewsLetterSubscriptions_SelectAll]
     @PageIndex int,
     @PageSize int,
     @All bit = null
+	
 AS
 /*
 Declare @PageIndex int = 0 , @PageSize int = 100, @All bit = 1
