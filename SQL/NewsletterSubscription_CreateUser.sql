@@ -2,7 +2,6 @@ ALTER PROC [dbo].[NewsletterSubscriptions_Insert]
 @Email nvarchar(50),
 @IsSubscribed bit
 
-
 AS
 /*
 Declare
@@ -17,7 +16,6 @@ Execute dbo.NewsLetterSubscriptions_Insert
 Select * 
 From dbo.NewsLetterSubscriptions
 */
-
 BEGIN
 
 INSERT INTO [dbo].[NewsLetterSubscriptions]
