@@ -11,10 +11,8 @@ ALTER PROC [dbo].[NewsLetterSubscriptions_Select_ByEmail]
 AS
 
 /*
-
 Declare @Email nvarchar(50) = 'testemail1@gmail.com'
-Execute dbo.NewsLetterSubscriptions_Select_ByEmail @Email
-       
+Execute dbo.NewsLetterSubscriptions_Select_ByEmail @Email 
 */
 
 BEGIN
