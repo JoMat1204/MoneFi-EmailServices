@@ -5,18 +5,16 @@ import PropTypes from "prop-types";
 import Pagination from "rc-pagination";
 import "rc-pagination/assets/index.css";
 import * as newsLetterService from "services/newsletterSubscriptionFormService";
-import debug from "sabio-debug";
 
 function NewsletterSubscriptionsTableTheme({ triggerParentUpdate, subscribedUsers, searchQuery, onSearchQueryChange }) {
   const [showOnlySubscribed, setShowOnlySubscribed] = useState(null);
-  const _logger = debug.extend("NewsLetter");
 
   const data = React.useMemo(() => subscribedUsers, [subscribedUsers]);
 
-  _logger(data, "data");
+  console.log(data, "data");
 
   const handleSubscriberStatusChange = (row, isSubscribed) => {
-    _logger(row, isSubscribed, "line 24");
+    console.log(row, isSubscribed, "line 24");
     const formData = {
       email: row.original.email,
       isSubscribed: JSON.parse(isSubscribed),
@@ -29,7 +27,7 @@ function NewsletterSubscriptionsTableTheme({ triggerParentUpdate, subscribedUser
   };
 
   const onUpdateSuccess = (updatedEmail, row) => {
-    _logger("This email has been updated", updatedEmail, row);
+    console.log("This email has been updated", updatedEmail, row);
     const updatedUser = {
       ...updatedEmail,
       email: row.original.email,
@@ -40,7 +38,7 @@ function NewsletterSubscriptionsTableTheme({ triggerParentUpdate, subscribedUser
   };
 
   const onUpdateError = (error) => {
-    _logger({ error: error });
+    console.log({ error: error });
   };
 
   const columns = React.useMemo(
@@ -66,7 +64,7 @@ function NewsletterSubscriptionsTableTheme({ triggerParentUpdate, subscribedUser
         Header: "Status",
         accessor: "isSubscribed",
         Cell: ({ value, row }) => {
-          _logger(value, row, "this is value and row");
+          console.log(value, row, "this is value and row");
           return (
             <FormSelect value={value.toString()} onChange={(e) => handleSubscriberStatusChange(row, e.target.value)} className="mt-3 me-3">
               <option value="true">Subscribed</option>
